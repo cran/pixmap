@@ -5,6 +5,13 @@
 \alias{pixmapGrey-class}
 \alias{pixmapIndexed-class}
 \alias{pixmapChannels-class}
+\alias{coerce,pixmapGrey,pixmapIndexed-method}
+\alias{coerce,pixmapGrey,pixmapRGB-method}
+\alias{coerce,pixmapRGB,pixmapGrey-method}
+\alias{coerce,pixmapRGB,pixmapIndexed-method}
+\alias{coerce,pixmapIndexed,pixmapRGB-method}
+\alias{coerce,ANY,pixmapGrey-method}
+\alias{coerce,ANY,pixmapIndexed-method}
 \title{Class Family "pixmap".}
 \description{The family \code{"pixmap"} (``pixel maps'') of classes provides
   methods for creating,

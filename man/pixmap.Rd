@@ -4,6 +4,10 @@
 \alias{pixmapRGB}
 \alias{pixmapGrey}
 \alias{pixmapIndexed}
+\alias{plot,pixmap-method}
+\alias{show,pixmap-method}
+\alias{[,pixmap-method}
+
 \usage{
 pixmap(data=NULL, nrow=dim(data)[1], ncol=dim(data)[2],
        bbox=NULL, bbcent=FALSE, cellres=NULL)
