@@ -4,7 +4,7 @@ read.pnm <- function(file, ...){
     con <- file(file, open="rb")
     open(con, open="rb")
 
-    pnmhead <- read.pnmhead(con, fsz)
+    pnmhead <- read.pnmhead(con)
     retval <- read.pnmdata(con, pnmhead, ...)    
 
     if (fsz != seek(con)) warning(paste("Possible reading error: file size",
@@ -71,119 +71,6 @@ read.pnmdata <- function(con, pnmhead, ...)
     }
     
     z
-}
-
-read.pnmhead <- function(con, consize)
-{
-    argvec <- function(inpstr) {
-        nin <- nchar(inpstr)
-        res <- unlist(strsplit(gsub("[ \t\m\n]*", " ", inpstr), " "))
-        lres <- length(res)
-        nres <- nchar(res)
-        to5 <- min(5, lres)
-        ws <- is.white.space(inpstr)
-        here <- 0
-        end <- NULL
-        for (i in 1:to5) {
-            if(is.na(ws[i,1])) break
-            if (nres[i] != ws[i,1]) stop("whitespace mismatch")
-            li <- nres[i] + ws[i,2]
-            here <- here + li
-            end <- c(end, here)
-        }
-        attr(res, "end") <- end
-        res
-    }
-
-    is.white.space <- function(inpstr)
-    {
-	tmp <- unlist(strsplit(inpstr, ""))
-	ltmp <- length(tmp)
-	res <- rep(TRUE, ltmp)
-	for (i in 1:ltmp)
-            if (regexpr("[ \t\m\n]", tmp[i]) == -1) res[i] <- FALSE
-	ans <- matrix(rle(res)$lengths[1:12], ncol=2, byrow=TRUE)
-	ans
-    }
-
-    strip.comments <- function(inpstr) {
-	com1 <- as.integer(regexpr("#", inpstr))
-	if (com1 == -1) {
-            new <- inpstr
-            attr(new, "ncoms") <- attr(inpstr, "ncoms")
-	} else {
-            ns <- nchar(inpstr)
-            com2 <- regexpr("\n", substr(inpstr, com1, stop=ns)) + com1 - 1
-            new <- paste(substr(inpstr, 1, com1-1),
-                         substr(inpstr, com2, ns), sep="")
-            attr(new, "ncoms") <- attr(inpstr, "ncoms") + 1
-            new <- strip.comments(new)
-            
-	}
-	new
-    }
-
-    s350 <- readChar(con, nchars=min(350, consize))
-    ns350 <- nchar(s350)
-    attr(s350, "ncoms") <- 0
-    
-    new <- strip.comments(s350)
-    
-    ncoms <- attr(new, "ncoms")
-    loss1 <- ns350 - nchar(new)
-    
-    newa <- argvec(new)
-    
-    lnewa <- length(newa)
-    
-    P <- unlist(strsplit(newa[1], split=""))
-    if (P[1] != "P") {
-        close(con)
-        stop("not a pnm file")
-    }
-    if (!(P[2] %in% c("1", "2", "3", "4", "5", "6"))) {
-        close(con)
-        stop("not a pnm file")
-    }
-    P2 <- as.integer(P[2])
-    if (P2 > 0 && P2 < 4) ascii <- TRUE
-    if (P2 > 3 && P2 < 7) ascii <- FALSE
-    
-    nc <- as.integer(newa[2])
-    nr <- as.integer(newa[3])
-    
-    data <- 5
-    datastart <- NULL
-    if (P2 == 1 || P2 == 4) {
-        type <- "pbm"
-        data <- 4
-        maxval <- as.integer(1)
-        if (lnewa == 3) datastart <- ns350
-    }
-    if (P2 == 2 || P2 == 5) {
-        type <- "pgm"
-        maxval <- as.integer(newa[4])
-        if (lnewa == 4) datastart <- ns350
-    }
-    if (P2 == 3 || P2 == 6) {
-        type <- "ppm"
-        maxval <- as.integer(newa[4])
-        if (lnewa == 4) datastart <- ns350
-    }
-    
-    if (is.null(datastart)) {
-        end <- attr(newa, "end")
-        datastart <- loss1 + end[data-1]
-    }
-    seek(con, 0)
-    
-    if (nc < 0 || nr < 0 || maxval < 1 || maxval > 255)
-        warning(paste("Possible error reading heading: nc:", nc,
-                      "nr:", nr, "maxval:", maxval))
-    
-    res <- list(nc = nc, nr = nr, maxval = maxval, type=type,
-		datastart=datastart, ascii=ascii)
-    invisible(res)
 }
 
 

@@ -1,3 +1,8 @@
+Changes in pixmap version 0.3-1
+
+  o read.pnm(): changes made to function reading and parsing PNM file
+    headers to permit comments of arbitrary length.
+
 Changes in pixmap version 0.3-0
 
   o The whole package has moved to S4 classes and methods, hence all
