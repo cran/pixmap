@@ -2,7 +2,6 @@ read.pnm <- function(file, ...){
 
     fsz <- file.info(file)$size
     con <- file(file, open="rb")
-    open(con, open="rb")
 
     pnmhead <- read.pnmhead(con)
     retval <- read.pnmdata(con, pnmhead, ...)    
