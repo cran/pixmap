@@ -1,4 +1,5 @@
-channels-methods        Methods for Channel Manipulation
+addlogo-methods         Methods for Adding a Pixmap Logo to a Plot
+addChannels             Methods for Channel Manipulation
 pixmap-class            Class Family "pixmap".
 pixmap                  Pixmap Images
-pnm                     Read/Write Portable Anymap Images
+write.pnm               Read/Write Portable Anymap Images

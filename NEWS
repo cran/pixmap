@@ -1,9 +1,16 @@
-Changes in pixmap version 0.3-3
+Changes in pixmap version 0.4-0
 
-  o Clarified documentation of read.pnm (file name extensions are
-    ignored).
+  o read.pnm(): vectorized (and renamed)  as.integer.bytes() which provides
+    a huge performance gain for reading "PBM" (B & W bitmaps).
+
+  o new function addlogo()
   
-	
+
+Changes in pixmap version 0.3-4
+
+  o Clarified documentation of read.pnm (file name extensions are ignored).
+
+  
 Changes in pixmap version 0.3-3
 
   o fixed some codoc problems (missing aliases)
@@ -14,12 +21,13 @@ Changes in pixmap version 0.3-1
   o read.pnm(): changes made to function reading and parsing PNM file
     headers to permit comments of arbitrary length.
 
+    
 Changes in pixmap version 0.3-0
 
   o The whole package has moved to S4 classes and methods, hence all
     classes have a new representation. This also means that the code
     and the API are not fully backwards compatible with earlier
-    versions of the package. 
+    versions of the package.
 
   o Added support for subsetting (see example(pixmap)).
 
@@ -34,9 +42,10 @@ Changes in pixmap version 0.2-1
       argument (if present). Hence, pixmap does the expected when
       given a matrix or an array.
     - data is rescaled to [0,1] for rgb and grey, and coerced to positive
-      integers for indexed.   
+      integers for indexed.
     - col can also be a function like rainbow()
 
+    
 Changes in pixmap version 0.1-2
 
   o Fixed bugs in plotting, read.pnm and write.pnm which confused

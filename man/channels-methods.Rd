@@ -13,8 +13,8 @@
   for generic \code{getChannels} return numeric matrices or arrays
   containing the specified channels.}
 \usage{
-  addChannels(object, coef=NULL)
-  getChannels(object, colors="all")
+  addChannels(object, coef = NULL)
+  getChannels(object, colors = "all")
 }
 \arguments{
   \item{object}{Object of class \code{"pixmap"}.}
