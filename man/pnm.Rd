@@ -5,7 +5,7 @@
 \alias{read.pnmdata}
 \alias{read.pnmhead}
 \usage{
-read.pnm(file, bbox=NULL)
+read.pnm(file, ...)
 write.pnm(object, file="Rimage.pnm", forceplain=FALSE,
           type=NULL, maxval=255)
 }
@@ -13,8 +13,8 @@ write.pnm(object, file="Rimage.pnm", forceplain=FALSE,
   (grey) and PPM (color) format.}
 \arguments{
   \item{file}{name of the pnm file.}
-  \item{bbox}{bounding box of the resulting pixmap, see
-    \code{\link{pixmap}}}
+  \item{...}{Further arguments passed to \code{\link{pixmap}} (like
+    \code{bbox}).} 
   \item{object}{an object of class \code{"pixmap"}.}
   \item{forceplain}{If \code{TRUE}, an ASCII pnm file is written.
     Default is to write a binary (raw) file.}
@@ -49,6 +49,7 @@ write.pnm(object, file="Rimage.pnm", forceplain=FALSE,
 \examples{
  x <- read.pnm(system.file("pictures/logo.ppm", package="pixmap")[1])
  plot(x)
+ print(x)
 
  x <- read.pnm(system.file("pictures/logo.pgm", package="pixmap")[1])
  plot(x)

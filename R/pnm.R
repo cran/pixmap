@@ -1,12 +1,11 @@
-read.pnm <- function(file, bbox=NULL){
+read.pnm <- function(file, ...){
 
     fsz <- file.info(file)$size
     con <- file(file, open="rb")
     open(con, open="rb")
 
     pnmhead <- read.pnmhead(con, fsz)
-    retval <- read.pnmdata(con, pnmhead)    
-    attr(retval, "bbox") <- bbox
+    retval <- read.pnmdata(con, pnmhead, ...)    
 
     if (fsz != seek(con)) warning(paste("Possible reading error: file size",
 		fsz, "bytes, but", seek(con), "bytes read"))
@@ -14,7 +13,7 @@ read.pnm <- function(file, bbox=NULL){
     retval
 }
 
-read.pnmdata <- function(con, pnmhead)
+read.pnmdata <- function(con, pnmhead, ...)
 {
     as.integer.byte <- function (x) {
         if (x < 0 || x > 255) stop("Not an unsigned byte")
@@ -63,19 +62,17 @@ read.pnmdata <- function(con, pnmhead)
 
     if(nl==1){
         res <- t(res[1,,])
-        class(res) <- c("pixmapGrey", "pixmap")
+        res <- pixmap(res, type="grey", ...)
     }
     else{
         res1 <- array(0, dim=c(nr, nc, 3))
         res1[,,1] <- t(res[1,,])
         res1[,,2] <- t(res[2,,])
         res1[,,3] <- t(res[3,,])
-        res <- res1
-        dimnames(res) <- list(NULL, NULL, c("red", "green", "blue"))
-        class(res) <- c("pixmapRGB", "pixmap")
+        res <- pixmap(res1, type="rgb", ...)
     }
     
-    invisible(res)
+    res
 }
 
 read.pnmhead <- function(con, consize)
@@ -261,3 +258,4 @@ write.pnm <- function(object, file=NULL, forceplain=FALSE,
     }
     close(con)
 }
+

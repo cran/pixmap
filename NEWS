@@ -1,3 +1,14 @@
+Changes in pixmap version 0.2-1
+
+  o pixmap():
+    - Added arguments bbcent and cellres
+    - nrow and ncol default to the respective dimensions of the data
+      argument (if present). Hence, pixmap does the expected when
+      given a matrix or an array.
+    - data is rescaled to [0,1] for rgb and grey, and coerced to positive
+      integers for indexed.   
+    - col can also be a function like rainbow()
+
 Changes in pixmap version 0.1-2
 
   o Fixed bugs in plotting, read.pnm and write.pnm which confused
