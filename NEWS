@@ -1,3 +1,15 @@
+Changes in pixmap version 0.3-0
+
+  o The whole package has moved to S4 classes and methods, hence all
+    classes have a new representation. This also means that the code
+    and the API are not fully backwards compatible with earlier
+    versions of the package. 
+
+  o Added support for subsetting (see example(pixmap)).
+
+  o New: addChannels() and getChannels().
+
+
 Changes in pixmap version 0.2-1
 
   o pixmap():

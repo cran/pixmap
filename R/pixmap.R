@@ -1,9 +1,75 @@
-pixmap <- function(data=0, nrow=dim(data)[1], ncol=dim(data)[2],
-                   col=NULL, type=c("grey", "rgb", "indexed"),
+setClass("pixmap",
+         representation(size="integer",
+                        cellres="numeric",
+                        bbox="numeric",
+                        bbcent="logical"),
+         prototype(size=integer(2),
+                   cellres=numeric(2),
+                   bbox=numeric(4),
+                   channels=NULL))
+
+setClass("pixmapChannels",
+         representation(channels="character"),
+         contains="pixmap")
+
+setClass("pixmapGrey",
+         representation(grey="matrix"),
+         contains="pixmapChannels",
+         prototype=prototype(new("pixmap"), channels="grey"))
+
+
+setClass("pixmapIndexed",
+         representation(index="matrix",
+                        col="character"),
+         contains="pixmap",
+         prototype=prototype(new("pixmap")))
+
+setClass("pixmapRGB",
+         representation(red="matrix",
+                        green="matrix",
+                        blue="matrix"),
+         contains="pixmapChannels",
+         prototype=prototype(new("pixmap"),
+                             channels=c("red", "green", "blue")))
+
+
+
+###**********************************************************
+
+setMethod("show", "pixmap",
+function(object){
+    cat("Pixmap image\n")
+    cat("  Type          :", class(object), "\n")
+    cat("  Size          :", paste(object@size, collapse="x"), "\n")
+    cat("  Resolution    :", paste(object@cellres, collapse="x"), "\n")
+    cat("  Bounding box  :", object@bbox, "\n")
+    if(is(object, "pixmapIndexed"))
+        cat("  Nr. of colors :",
+            length(unique(object@index)), "of", 
+            length(object@col), "\n")
+    cat("\n")
+})
+
+
+setMethod("plot", "pixmap",
+function(x, y, xlab="", ylab="", axes=FALSE, asp=1, ...){
+    x = as(x, "pixmapIndexed")
+    X <- seq(x@bbox[1], x@bbox[3], by=x@cellres[1])
+    Y <- seq(x@bbox[2], x@bbox[4], by=x@cellres[2])
+    
+    image(x=X, y=Y, z=t(x@index[nrow(x@index):1,]), col=x@col,
+          xlab=xlab, ylab=ylab, axes=axes, asp=asp, ...)
+})
+          
+
+
+###**********************************************************
+
+
+pixmap <- function(data=NULL, nrow=dim(data)[1],
+                   ncol=dim(data)[2],
                    bbox=NULL, bbcent=FALSE, cellres=NULL)
 {
-    type <- match.arg(type)
-
     cellres <- rep(cellres, length=2)
     if(is.null(bbox)){
         if(is.null(cellres))
@@ -34,12 +100,7 @@ pixmap <- function(data=0, nrow=dim(data)[1], ncol=dim(data)[2],
             else if(is.null(ncol))
                 ncol <- ceiling(length(data)/nrow)
 
-            if(bbcent)
-                cellres <- c((bbox[3]-bbox[1])/(ncol-1),
-                             (bbox[4]-bbox[2])/(nrow-1))
-            else
-                cellres <- c((bbox[3]-bbox[1])/ncol,
-                             (bbox[4]-bbox[2])/nrow)
+            cellres = .getCellres(bbox, bbcent, c(nrow, ncol))
         }
         else{
             if(bbcent){
@@ -53,165 +114,230 @@ pixmap <- function(data=0, nrow=dim(data)[1], ncol=dim(data)[2],
         }
     }
     
-    if(type == "indexed"){
-        data <- as.integer(data)
-        datamin <- min(data)
-        if(datamin<=0)
-            data <- data - datamin + 1
-        datamax <- max(data)
-    }
-    else{
-        datamax <- max(data)
-        datamin <- min(data)
-        data <- as.numeric(data)
-        if(datamax>1 || datamin<0)
-            data <- (data - datamin)/(datamax-datamin)
-    }
-    
-    if(type=="rgb"){
-        data <- array(data, dim=c(nrow, ncol, 3))
-        dimnames(data) <- list(NULL, NULL, c("red","green","blue"))
-        class(data) <- c("pixmapRGB", "pixmap")
-    }
-    else{
-        data <- matrix(data, nrow=nrow, ncol=ncol)
-        if(type=="indexed"){
-            class(data) <- c("pixmapIndexed", "pixmap")
-            if(is.null(col))
-                col <- heat.colors(datamax)
-            else{
-                if(is.function(col))
-                    col <- col(datamax)
-                else {
-                    if (is.function(col)) col <- col(datamax)
-                    else if(length(col) < datamax){
-                        warning("number of of colors smaller than number of data values, recycling\n")
-                        col <- rep(col, length=datamax)
-                    }
-                }
-            }
-            
-            attr(data, "col") <- col
-        }
-        else{
-            class(data) <- c("pixmapGrey", "pixmap")
-        }
-    }
-    
-    attr(data, "cellres") <- cellres
-    attr(data, "bbox") <- bbox
-    data
+    new("pixmap", size=as(c(nrow, ncol),"integer"),
+        cellres=cellres, bbox=bbox, bbcent=bbcent)
 }
 
 
-as.pixmapIndexed <- function(object)
-    UseMethod("as.pixmapIndexed")
-
-as.pixmapIndexed.pixmap <- function(object)
+pixmapGrey = function(data, ...)
 {
-    if(inherits(object, "pixmapIndexed"))
-        return(object)
-    else if(inherits(object, "pixmapRGB"))
-        x <- rgb(object[,,"red"],object[,,"green"],object[,,"blue"])
-    else if(inherits(object, "pixmapGrey"))
-        x <- grey(object)
-    else
-        error("Unknown pixmap subclass")
+    z = new("pixmapGrey", pixmap(data, ...))
     
+    datamax <- max(data)
+    datamin <- min(data)
+    data <- as.numeric(data)
+    if(datamax>1 || datamin<0)
+        data <- (data - datamin)/(datamax-datamin)
+
+    z@grey = matrix(data, nrow=z@size[1], ncol=z@size[2])
+    z
+}
+
+pixmapRGB = function(data, ...)
+{
+    z = new("pixmapRGB", pixmap(data, ...))
+    
+    datamax <- max(data)
+    datamin <- min(data)
+    data <- as.numeric(data)
+    if(datamax>1 || datamin<0)
+        data <- (data - datamin)/(datamax-datamin)
+
+    data = array(data, dim=c(z@size[1], z@size[2], 3))
+
+    z@red = matrix(data[,,1], nrow=z@size[1], ncol=z@size[2])
+    z@green = matrix(data[,,2], nrow=z@size[1], ncol=z@size[2])
+    z@blue = matrix(data[,,3], nrow=z@size[1], ncol=z@size[2])
+    z
+}
+
+pixmapIndexed = function(data, col=NULL, ...)
+{
+    z = new("pixmapIndexed", pixmap(data, ...))
+    data <- as(data, "integer")
+    datamin <- min(data)
+    if(datamin<=0)
+        data <- data - datamin + 1
+    datamax <- max(data)
+    
+    z@index =  matrix(data, nrow=z@size[1], ncol=z@size[2])
+    if(is.null(col))
+        col <- heat.colors(datamax)
+    else{
+        if(is(col,"function"))
+            col <- col(datamax)
+        else {
+            if(length(col) < datamax){
+                warning("number of of colors smaller than number of data values, recycling\n")
+                col <- rep(col, length=datamax)
+            }
+        }
+    }
+    z@col = col
+    z
+}
+
+###**********************************************************
+
+setAs("pixmapGrey", "pixmapRGB",
+function(from, to){
+    z = new(to, as(from, "pixmap"))
+    z@red = from@grey
+    z@green = from@grey
+    z@blue = from@grey
+    z
+})
+
+setAs("pixmapRGB", "pixmapGrey",
+function(from, to){
+    addChannels(from)
+})
+
+setAs("pixmapRGB", "pixmapIndexed",
+function(from, to){
+    z = new(to, as(from, "pixmap"))
+    x = rgb(from@red,from@green,from@blue)
     col <- unique(x)
     x <- match(x, col)
-    x <- array(x, dim=dim(object)[1:2])
-    attr(x, "col") <- col
-    attr(x, "bbox") <- attr(object, "bbox")
-    attr(x, "cellres") <- attr(object, "cellres")
-    class(x) <- c("pixmapIndexed", "pixmap")
-    x
-}
+    z@index <- matrix(x, nrow=z@size[1], ncol=z@size[2])
+    z@col = col
+    z
+})
+
+setAs("pixmapGrey", "pixmapIndexed",
+function(from, to){
+    z = new(to, as(from, "pixmap"))
+    x = grey(from@grey)
+    col <- unique(x)
+    x <- match(x, col)
+    z@index <- matrix(x, nrow=z@size[1], ncol=z@size[2])
+    z@col = col
+    z
+})
+
+setAs("pixmapIndexed", "pixmapRGB",
+function(from, to){
+    z = as(from, "pixmapRGB")
+    x <- col2rgb(from@col[from@index])/255
+    z@red <- matrix(x["red",], nrow=z@size[1], ncol=z@size[2])
+    z@green <- matrix(x["green",], nrow=z@size[1], ncol=z@size[2])
+    z@blue <- matrix(x["blue",], nrow=z@size[1], ncol=z@size[2])
+    z
+})
 
 
-as.pixmapGrey <- function(object, coefs=c(0.30, 0.59, 0.11))
-    UseMethod("as.pixmapGrey")
+
+## the fallbacks: convert to RGB and then to target
+
+setAs("ANY", "pixmapGrey",
+function(from, to){
+    as(as(from, "pixmapRGB"), to)
+})
+
+setAs("ANY", "pixmapIndexed",
+function(from, to){
+    as(as(from, "pixmapRGB"), to)
+})
+
+###**********************************************************
+
+setGeneric("addChannels",
+function(object, coef=NULL) standardGeneric("addChannels"))
 
 
-as.pixmapGrey.pixmap <- function(object, coefs=c(0.30, 0.59, 0.11))
-{
-    coefs <- coefs/sum(coefs)
-    
-    if(inherits(object, "pixmapGrey"))
-        return(object)
-    
-    object <- as.pixmapRGB(object)
-    x <- coefs[1]*object[,,"red"] + coefs[2]*object[,,"green"] +
-        coefs[3]*object[,,"blue"]
-    
-    x <- array(x, dim=dim(object)[1:2])
-    attr(x, "bbox") <- attr(object, "bbox")
-    attr(x, "cellres") <- attr(object, "cellres")
-    class(x) <- c("pixmapGrey", "pixmap")
-    x
-}
+## coercion from RGB to Grey calls addChannels, hence be careful when
+## using as() methods (danger of infinite loops).
+setMethod("addChannels", "pixmapRGB",
+function(object, coef=NULL){
+    if(is.null(coef)) coef = c(0.30, 0.59, 0.11)
+    z = new("pixmapGrey", object)
+    z@grey = coef[1] * object@red + coef[2] * object@green +
+        coef[3] * object@blue
+    z
+})
+         
+setGeneric("getChannels",
+function(object, colors="all") standardGeneric("getChannels"))
 
+setMethod("getChannels", "pixmapChannels",
+function(object, colors="all"){
 
-as.pixmapRGB <- function(object)
-    UseMethod("as.pixmapRGB")
+    for(k in 1:length(colors))
+        colors[k] = match.arg(colors[k], c("all", object@channels))
+    if(any(colors=="all")) colors = object@channels
+    colors = unique(colors)
+    if(length(colors)>1){
+        z = array(0, dim=c(object@size, length(colors)))
+        dimnames(z) = list(NULL, NULL, colors)
+        for(k in colors){
+            z[,,k] = slot(object, k)
+        }
+    }
+    else{
+        z = slot(object, colors)
+    }
+    z
+})
+          
+                          
+###**********************************************************
 
-as.pixmapRGB.pixmap <- function(object)
-{
-    if(inherits(object, "pixmapRGB"))
-        return(object)
-
-    if(inherits(object, "pixmapGrey"))
-        x <- array(object, dim=c(dim(object),3))
-    else if(inherits(object, "pixmapIndexed")){
-        x <- col2rgb(attr(object,"col")[object])/255
-        x <- array(c(x["red",], x["green",], x["blue",]),
-                   dim=c(dim(object),3))
+setMethod("[", "pixmap",
+function(x, i, j, ..., drop=FALSE){
+    if(missing(j))
+        j = TRUE
+    if(missing(i)) 
+        i = TRUE
+    osize = x@size
+    if(is(x, "pixmapIndexed")){
+        x@index = x@index[i,j,drop=FALSE]
+        x@size = dim(x@index)
+    }
+    else if(is(x, "pixmapChannels")){
+        for(k in x@channels)
+            slot(x, k) = slot(x, k)[i,j,drop=FALSE]
+        x@size = dim(slot(x, k))
     }
     else
-        error("Unknown pixmap subclass")
-
-    dimnames(x) <- list(NULL, NULL, c("red","green","blue"))
-    attr(x, "bbox") <- attr(object, "bbox")
-    attr(x, "cellres") <- attr(object, "cellres")
-    class(x) <- c("pixmapRGB", "pixmap")
-    x
-}
-
-
-
-
-
-plot.pixmap <- function(x,  ...)
-    plot.pixmapIndexed(as.pixmapIndexed(x), ...)
-
-plot.pixmapIndexed <- function(x, xlab="", ylab="", axes=FALSE, asp=1, ...)
-{
-    bb <- attr(x, "bbox")
-    bc <- attr(x, "cellres")
-
-    X <- seq(bb[1], bb[3], by=bc[1])
-    Y <- seq(bb[2], bb[4], by=bc[2])
+        stop(paste("Cannot subset objects of class", class(x)))
     
-    image(x=X, y=Y, z=t(x[nrow(x):1,]),
-          col=attr(x, "col"), xlab=xlab, ylab=ylab,
-          axes=axes, asp=asp, ...)
-}
+    
+    ## now we re-calculate bounding box and cellres
+    bbox = numeric(4)
+    if(x@bbcent){
+        b = seq(x@bbox[1], x@bbox[3], length=osize[2])
+        bbox[c(1,3)] = range(b[j])
+        b = seq(x@bbox[2], x@bbox[4], length=osize[1])
+        bbox[c(2,4)] = range(b[i])
+    }
+    else{
+        b = seq(x@bbox[1], x@bbox[3]-x@cellres[1], length=osize[2])
+        bbox[1] = min(b[j])
+        bbox[3] = max(b[j]) + x@cellres[1]
+        b = seq(x@bbox[2], x@bbox[4]-x@cellres[2], length=osize[1])
+        bbox[2] = min(b[i])
+        bbox[4] = max(b[i]) + x@cellres[2]
+    }
+    
+    x@bbox = bbox
+    x@cellres <- .getCellres(bbox, x@bbcent, x@size)
+    x
+})
 
-image.pixmap <- plot.pixmap
-
-
-print.pixmap <- function(x, ...)
+.getCellres = function(bbox, bbcent, size)
 {
-    cat("Pixmap image\n")
-    cat("  Type          :", class(x)[1], "\n")
-    cat("  Size          :", paste(dim(x)[1:2], collapse="x"), "\n")
-    cat("  Resolution    :", paste(attr(x, "cellres"), collapse="x"), "\n")
-    cat("  Bounding box  :", attr(x, "bbox"), "\n")
-    if(inherits(x, "pixmapIndexed"))
-        cat("  Nr. of colors :",
-            length(unique(x)), "of", 
-            length(attr(x, "col")), "\n")
-    cat("\n")
+    if(bbcent)
+        cellres = c((bbox[3]-bbox[1])/(size[2]-1),
+                    (bbox[4]-bbox[2])/(size[1]-1))
+    else
+        cellres = c((bbox[3]-bbox[1])/size[2],
+                    (bbox[4]-bbox[2])/size[1])
+
+    cellres
 }
-        
-        
+          
+
+
+      
+      
+      

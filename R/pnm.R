@@ -42,7 +42,7 @@ read.pnmdata <- function(con, pnmhead, ...)
         if (type == "pbm") {
             BytesPerRow <- ceiling(nc/8)
             bxx <- readBin(con, "integer",
-                           n=nr*BytesPerRow, size=1, signed=F)
+                           n=nr*BytesPerRow, size=1, signed=FALSE)
             
             xx <- NULL
             for (i in 1:length(bxx))
@@ -53,7 +53,7 @@ read.pnmdata <- function(con, pnmhead, ...)
         }
         else {
             xx <- readBin(con, "integer",
-                          n=ncells, size=1, signed=F)
+                          n=ncells, size=1, signed=FALSE)
             res <- array(xx, c(nl, nc, nr))
         }
     }
@@ -61,18 +61,16 @@ read.pnmdata <- function(con, pnmhead, ...)
     res <- res/pnmhead$maxval
 
     if(nl==1){
-        res <- t(res[1,,])
-        res <- pixmap(res, type="grey", ...)
+        z = pixmapGrey(t(res[1,,]), ...)
     }
     else{
-        res1 <- array(0, dim=c(nr, nc, 3))
-        res1[,,1] <- t(res[1,,])
-        res1[,,2] <- t(res[2,,])
-        res1[,,3] <- t(res[3,,])
-        res <- pixmap(res1, type="rgb", ...)
+        z = pixmapRGB(0, ncol=dim(res)[2], nrow=dim(res)[3], ...)
+        z@red = t(res[1,,])
+        z@green = t(res[2,,])
+        z@blue = t(res[3,,])
     }
     
-    res
+    z
 }
 
 read.pnmhead <- function(con, consize)
@@ -104,7 +102,7 @@ read.pnmhead <- function(con, consize)
 	res <- rep(TRUE, ltmp)
 	for (i in 1:ltmp)
             if (regexpr("[ \t\m\n]", tmp[i]) == -1) res[i] <- FALSE
-	ans <- matrix(rle(res)$lengths[1:12], ncol=2, byrow=T)
+	ans <- matrix(rle(res)$lengths[1:12], ncol=2, byrow=TRUE)
 	ans
     }
 
@@ -188,40 +186,42 @@ read.pnmhead <- function(con, consize)
     invisible(res)
 }
 
+
+
 write.pnm <- function(object, file=NULL, forceplain=FALSE,
                       type=NULL, maxval=255)
 {
-    if(!inherits(object, "pixmap"))
+    if(!is(object, "pixmap"))
         error("Can only write pixmap objects")
     
     if(is.null(type)){
-        if(inherits(object, "pixmapGray"))
+        if(is(object, "pixmapGray"))
             type <- "pgm"
         else
             type <- "ppm"
     }
     
     type <- match.arg(type, c("pbm", "pgm", "ppm"))
-    do <- dim(object)
+    do <- object@size
     
     if(type=="pbm"){
-        object <- as.pixmapGrey(object)
-        object <- t(object < 0.5)
+        object <- as(object, "pixmapGrey")
+        object <- t(object@grey < 0.5)
         storage.mode(object) <- "integer"
     }
     else if(type=="pgm"){
-        object <- as.pixmapGrey(object)
-        object <- t(round(object*maxval, 0))
+        object <- as(object, "pixmapGrey")
+        object <- t(round(object@grey*maxval, 0))
         storage.mode(object) <- "integer"
     }
     else{
-        object <- as.pixmapRGB(object)
-        object <- round(object*maxval, 0)
+        object <- as(object, "pixmapRGB")
         object1 <- array(0, dim=c(3, do[2], do[1]))
-        object1[1,,] <- t(object[,,1])
-        object1[2,,] <- t(object[,,2])
-        object1[3,,] <- t(object[,,3])
+        object1[1,,] <- t(object@red)
+        object1[2,,] <- t(object@green)
+        object1[3,,] <- t(object@blue)
         object <- object1
+        object <- round(object*maxval, 0)
         storage.mode(object) <- "integer"
     }
     

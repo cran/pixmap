@@ -4,24 +4,12 @@
 \alias{pixmapRGB}
 \alias{pixmapGrey}
 \alias{pixmapIndexed}
-\alias{as.pixmapRGB}
-\alias{as.pixmapGrey}
-\alias{as.pixmapIndexed}
-\alias{as.pixmapRGB.pixmap}
-\alias{as.pixmapGrey.pixmap}
-\alias{as.pixmapIndexed.pixmap}
-\alias{print.pixmap}
-\alias{plot.pixmap}
-\alias{image.pixmap}
-\alias{plot.pixmapIndexed}
 \usage{
-pixmap(data=0, nrow=dim(data)[1], ncol=dim(data)[2],
-       col=NULL, type=c("grey", "rgb", "indexed"),
+pixmap(data=NULL, nrow=dim(data)[1], ncol=dim(data)[2],
        bbox=NULL, bbcent=FALSE, cellres=NULL)
-as.pixmapRGB(object)
-as.pixmapGrey(object, coefs=c(0.30, 0.59, 0.11))
-as.pixmapIndexed(object)
-\method{plot}{pixmap}(x, ...)
+pixmapRGB(data, ...)
+pixmapGrey(data, ...)
+pixmapIndexed(data, col, ...)
 }
 \description{
   The family \code{"pixmap"} (``pixel maps'') of classes provides
@@ -32,10 +20,6 @@ as.pixmapIndexed(object)
   \item{data}{An optional data vector.}
   \item{nrow}{Vertical size of the image in pixels.}
   \item{ncol}{Horizontal size of the image in pixels.}
-  \item{col}{Character vector of colors to use if \code{type} is
-    \code{"indexed"}, or a function like \code{\link{rainbow}} which can
-    be used to create a palette.}
-  \item{type}{Type of pixmap to create, see details below.}
   \item{bbox}{Bounding box of the image, vector of length 4 of form \code{c(x1,
       y1, x2, y2)} with coordinates for the lower left corner and upper
     right corner.}
@@ -46,47 +30,21 @@ as.pixmapIndexed(object)
   \item{cellres}{Numeric vector of length 1 or 2, specifies the
     resolution of pixels in horizontal and vertical direction. If only
     one value is given, resolution in both directions is identical.}
-  \item{x, object}{Object of class \code{"pixmap"}}.
-  \item{coefs}{Coefficients used for converting a color image to
-    grey. The grey value is simply the weighted sum of the channels red,
-    green and blue in each pixel.}
-  \item{...}{Graphical parameters passed to \code{\link{image}}.}
+  \item{col}{Character vector of colors to use for indexed pictures, or
+    a function like \code{\link{rainbow}} which can
+    be used to create a palette.}
+  \item{...}{Additional arguments passed to \code{pixmap()}.}
 }
 \details{
-  Class \code{"pixmap"} has currently the three subclasses
-  \code{"pixmapRGB"}, \code{"pixmapGrey"}, and
-  \code{"pixmapIndexed"}. The optional bounding box specifies a coordinate
-  system for the image and is, e.g., used for labelling the axes
-  in plots. Methods for coercion between all formats are available.
-
-  RGB pixmaps are three-dimensional arrays where
-  the first two dimensions give the size of the image in pixels and the
-  third dimension is for the three color channels red, green and
-  blue. Elements of the array must be between 0 (=color off) and 1
-  (=color at maximum), otherwise \code{data} is rescaled appropriatly.
-
-  Grey and indexed pixmaps are matrices, the element \code{[1,1]}
-  corresponds to the upper left corner as usual. For grey pixmaps the
-  elements must be between 0 (black) and 1 (white). Indexed pixmaps have
-  integer elements, each giving the index number corresponding to the
-  palette specified in \code{"col"}. Again, automatic rescaling is
-  attempted if \code{data} is not inside the allowed range.
-  Colors are given using the usual R
-  color strings (either names like \code{"red"} or hex values like
-  \code{"#FF0000"}). Alternatively, a function to create a color palette
-  can be specified, see \code{\link{rainbow}} or
-  \code{\link{heat.colors}} for examples.
-
-  If the \code{data} argument is 2- or 3-diemnsional, \code{nrow} and
+  If the \code{data} argument is 2- or 3-dimensional, \code{nrow} and
   \code{ncol} default to the first two dimensions of \code{data}, such
   that \code{pixmap} does the expected when given a matrix or an array.
   
   The arguments \code{bbox}, \code{bbcent} and \code{cellres} can be
   used to specify a coordinate system for the image. Note that together
   with \code{nrow} and \code{ncol} the coordinate system is
-  overspecified, hence not all parametrs must be specified, the rest is
+  overspecified, hence not all parameters must be specified, the rest is
   computed or set to sensible defaults.
-
 
   For \code{bbcent=FALSE} we have
   \code{cellres[1] = (bbox[3]-bbox[1])/ncol}
@@ -97,23 +55,22 @@ as.pixmapIndexed(object)
   and
   \code{cellres[2] = (bbox[4]-bbox[2])/(nrow-1)}.
   
-
-  The name \code{pixmap} was chosen because both \code{image} and \code{bitmap}
-  are already used in R.
+  The name \code{pixmap} was chosen because both \code{image} and
+  \code{bitmap} are already used in R.
 }
 \author{Friedrich Leisch}
-\seealso{\code{\link{read.pnm}}}
+\seealso{\code{\link{pixmap-class}}, \code{\link{read.pnm}}}
 \keyword{color}
 \examples{
  ## A simple example
- x <- pixmap(rep(1:8, 9), nrow=6, col=terrain.colors(8), type="indexed")
+ x <- pixmapIndexed(rep(1:8, 9), nrow=6, col=terrain.colors(8))
  plot(x)
+
  ## The same with different colors, and passing the function instead of
  ## a color vector 
- x <- pixmap(rep(1:8, 9), nrow=6, col=rainbow, type="indexed")
+ x <- pixmapIndexed(rep(1:8, 9), nrow=6, col=rainbow)
  plot(x)
  plot(x, asp=.5, axes=TRUE)
- plot(as.pixmapGrey(x))
 
  ## Read data from a file
  x <- read.pnm(system.file("pictures/logo.ppm", package="pixmap")[1])
@@ -128,7 +85,15 @@ as.pixmapIndexed(object)
  ## Notice that we specify a bounding box to get the correct
  ## coordinates on the axes. z1, z2 and z3 are used as red,
  ## green and blue channel, respectively.
- z <- pixmap(c(z1,z2,z3), 100, 100, type="rgb", bbox=c(-1,-1,1,1))
+ z <- pixmapRGB(c(z1,z2,z3), 100, 100, bbox=c(-1,-1,1,1))
  plot(z, axes=TRUE)
+
+ ## look at a grey version
+ plot(as(z, "pixmapGrey"))
+
+ ## subsetting works as expected
+ plot(z[1:20,])
+ plot(z[,1:40])
+ plot(z[1:20,10:40])
 }
 
