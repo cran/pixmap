@@ -54,7 +54,7 @@ read.pnmhead <- function(con) {
     
     seek(con, 0)
     
-    if (nc < 0 || nr < 0 || maxval < 1 || maxval > 255)
+    if (nc < 0 || nr < 0 || maxval < 1 || maxval > 65535)
 	warning(paste("Possible error reading heading: nc:", nc,
 	"nr:", nr, "maxval:", maxval))
     

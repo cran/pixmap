@@ -79,7 +79,7 @@ write.pnm <- function(object, file=NULL, forceplain=FALSE,
         error("Can only write pixmap objects")
 
     if(is.null(type))
-        type <- if(is(object, "pixmapGray")) "pgm" else "ppm"
+        type <- if(is(object, "pixmapGrey")) "pgm" else "ppm"
     else
         type <- match.arg(type, c("pbm", "pgm", "ppm"))
     do <- object@size

@@ -1,3 +1,13 @@
+Changes in pixmap version 0.4-1
+
+  o Fixed a bug in write.pnm() that wrote grey images in PPM format.
+
+  o The channel information was not changed when converting between
+    RGB and grey pixmaps.
+
+  o The maxval in PNM headers must be less than 65536, not less than 256.
+  
+	
 Changes in pixmap version 0.4-0
 
   o read.pnm(): vectorized (and renamed)  as.integer.bytes() which provides

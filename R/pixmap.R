@@ -185,6 +185,7 @@ function(from, to){
     z@red = from@grey
     z@green = from@grey
     z@blue = from@grey
+    z@channels = c("red", "green", "blue")
     z
 })
 
@@ -222,6 +223,7 @@ function(from, to){
     z@red <- matrix(x["red",], nrow=z@size[1], ncol=z@size[2])
     z@green <- matrix(x["green",], nrow=z@size[1], ncol=z@size[2])
     z@blue <- matrix(x["blue",], nrow=z@size[1], ncol=z@size[2])
+    z@channels = c("red", "green", "blue")
     z
 })
 
@@ -253,6 +255,7 @@ function(object, coef=NULL){
     z = new("pixmapGrey", object)
     z@grey = coef[1] * object@red + coef[2] * object@green +
         coef[3] * object@blue
+    z@channels = "grey"
     z
 })
          
