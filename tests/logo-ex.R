@@ -1,4 +1,4 @@
-library(pixmap)
+library("pixmap")
 
 x <- read.pnm(system.file("pictures/logo.ppm", package="pixmap")[1])
 dx <- x@size

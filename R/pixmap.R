@@ -45,7 +45,7 @@ function(object){
     cat("  Bounding box  :", object@bbox, "\n")
     if(is(object, "pixmapIndexed"))
         cat("  Nr. of colors :",
-            length(unique(object@index)), "of", 
+            length(unique(as(object@index, "vector"))), "of", 
             length(object@col), "\n")
     cat("\n")
 })
@@ -218,7 +218,7 @@ function(from, to){
 
 setAs("pixmapIndexed", "pixmapRGB",
 function(from, to){
-    z = as(from, "pixmapRGB")
+    z = new(to, as(from, "pixmap"))
     x <- col2rgb(from@col[from@index])/255
     z@red <- matrix(x["red",], nrow=z@size[1], ncol=z@size[2])
     z@green <- matrix(x["green",], nrow=z@size[1], ncol=z@size[2])
@@ -226,7 +226,6 @@ function(from, to){
     z@channels = c("red", "green", "blue")
     z
 })
-
 
 
 ## the fallbacks: convert to RGB and then to target

@@ -1,3 +1,14 @@
+Changes in pixmap version 0.4-2
+
+  o Adjust for R 2.0.0.
+
+  o Fixed a bug in coercion from pixmapIndexed to pixmapRGB.
+
+  o There was a bug in the methods package of R 1.9.x which was 
+    triggered by functions in pixmap, hence this version of the
+    package depends on R >= 2.0.0. 
+
+
 Changes in pixmap version 0.4-1
 
   o Fixed a bug in write.pnm() that wrote grey images in PPM format.
