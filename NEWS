@@ -1,5 +1,11 @@
 Changes in pixmap version 0.3-3
 
+  o Clarified documentation of read.pnm (file name extensions are
+    ignored).
+  
+	
+Changes in pixmap version 0.3-3
+
   o fixed some codoc problems (missing aliases)
 
 

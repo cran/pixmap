@@ -40,7 +40,10 @@ write.pnm(object, file="Rimage.pnm", forceplain=FALSE,
 \value{
   \code{read.pnm} returns an object of class \code{\link{pixmapRGB}} for color
   pixmaps (ppm), and an object of class \code{\link{pixmapGrey}} for pbm
-  and pgm. 
+  and pgm. Note that the \emph{type} of file as determined by the first
+  two bytes according to pnm standards is important, \emph{not the
+    extension} of the file. In fact, the file name extension is
+  completely ignored.
 }
 \author{Roger Bivand and Friedrich Leisch}
 \seealso{\code{\link{pixmap}}}

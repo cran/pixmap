@@ -1,6 +1,6 @@
 Package: pixmap
-Version: 0.3-3
-Date: 2003-09-03
+Version: 0.3-4
+Date: 2003-09-24
 Title:  Bitmap Images (``Pixel Maps'')
 Depends: R (>= 1.6.0), methods
 Author: Friedrich Leisch and Roger Bivand
