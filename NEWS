@@ -1,0 +1,5 @@
+Changes in pixmap version 0.1-2
+
+  o Fixed bugs in plotting, read.pnm and write.pnm which confused
+    dimensions (rows versus columns), but together let plots look OK.
+
