@@ -36,7 +36,8 @@ pixmapIndexed(data, col, ...)
     one value is given, resolution in both directions is identical.}
   \item{col}{Character vector of colors to use for indexed pictures, or
     a function like \code{\link{rainbow}} which can
-    be used to create a palette.}
+    be used to create a palette. Colors set to \code{NA} are 
+    transparent; this can be used,e.g., for overlaying plots.}
   \item{...}{Additional arguments passed to \code{pixmap()}.}
 }
 \details{
@@ -99,5 +100,15 @@ pixmapIndexed(data, col, ...)
  plot(z[1:20,])
  plot(z[,1:40])
  plot(z[1:20,10:40])
+
+ ## overlay different images using transparency
+ ## base image as before
+ x <- pixmapIndexed(rep(1:8, 9), nrow=6, col=terrain.colors(8))
+ plot(x)
+ ## make a mask of vertical bars
+ mask <- array(0,dim=c(6,12))
+ mask[,seq(1,12,3)] <- 1
+ ## plot this mask over existing image with transparent and black color
+ plot(pixmapIndexed(mask,col=c("NA","#000000")),add=TRUE)
 }
 
