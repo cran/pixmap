@@ -5,8 +5,7 @@ setClass("pixmap",
                         bbcent="logical"),
          prototype(size=integer(2),
                    cellres=numeric(2),
-                   bbox=numeric(4),
-                   channels=NULL))
+                   bbox=numeric(4)))
 
 setClass("pixmapChannels",
          representation(channels="character"),

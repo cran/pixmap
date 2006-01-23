@@ -1,3 +1,8 @@
+Changes in pixmap version 0.4-4
+
+  o Fixed a bug in the prototype of class "pixmap".
+
+
 Changes in pixmap version 0.4-3
 
   o New example for overlaying plots in help(pixmap) submitted by 
