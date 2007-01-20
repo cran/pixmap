@@ -1,3 +1,15 @@
+Changes in pixmap version 0.4-6
+  
+  o Modified one of the regression tests for changes in R 2.4: 
+    terrain.colors() now return transparency information 
+    -> do not use it in example.
+
+
+Changes in pixmap version 0.4-5
+
+  o standardized license filed in DESCRIPTION file.
+
+
 Changes in pixmap version 0.4-4
 
   o Fixed a bug in the prototype of class "pixmap".

@@ -2,7 +2,7 @@ library("pixmap")
 
 ## this triggered a bug in R <= 1.9.1
 
-x <- pixmapIndexed(rep(1:8, 9), nrow=6, col=terrain.colors(8))
+x <- pixmapIndexed(rep(1:8, 9), nrow=6, col=hsv(runif(8),runif(8),runif(8)))
 plot(x)
 print(x)
 file <- tempfile()
