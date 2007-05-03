@@ -1,3 +1,8 @@
+Changes in pixmap version 0.4-7
+
+  o Use LazyLoad instead of SaveImage.
+
+
 Changes in pixmap version 0.4-6
   
   o Modified one of the regression tests for changes in R 2.4: 
