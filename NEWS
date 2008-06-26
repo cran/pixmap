@@ -1,3 +1,9 @@
+Changes in pixmap version 0.4-8
+
+  o Fixed a bug that prevented plotting images with only 1 row (bug
+    report by Robert Esswein).
+
+
 Changes in pixmap version 0.4-7
 
   o Use LazyLoad instead of SaveImage.

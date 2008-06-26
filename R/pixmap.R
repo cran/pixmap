@@ -56,7 +56,7 @@ function(x, y, xlab="", ylab="", axes=FALSE, asp=1, ...){
     X <- seq(x@bbox[1], x@bbox[3], by=x@cellres[1])
     Y <- seq(x@bbox[2], x@bbox[4], by=x@cellres[2])
     
-    image(x=X, y=Y, z=t(x@index[nrow(x@index):1,]), col=x@col,
+    image(x=X, y=Y, z=t(x@index[nrow(x@index):1,,drop=FALSE]), col=x@col,
           xlab=xlab, ylab=ylab, axes=axes, asp=asp, ...)
 })
           

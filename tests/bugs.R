@@ -21,3 +21,15 @@ stopifnot(all.equal(x1, x3))
 
 ###**********************************************************
 
+## plotting images with only 1 column or row
+## (from bug report by Robert Esswein)
+
+library(pixmap)
+
+## Vertical colorbar:
+pm <- pixmapIndexed(matrix(1:16,ncol=1,nrow=16),col=palette())
+plot(pm)
+
+## Horizontal colorbar attempt:
+pm <- pixmapIndexed(matrix(1:16,ncol=16,nrow=1),col=palette())
+plot(pm)
