@@ -1,3 +1,8 @@
+Changes in pixmap version 0.4-9
+
+  o Fixed a minor glitch in write.pnm.
+
+
 Changes in pixmap version 0.4-8
 
   o Fixed a bug that prevented plotting images with only 1 row (bug

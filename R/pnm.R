@@ -76,7 +76,7 @@ write.pnm <- function(object, file=NULL, forceplain=FALSE,
                       type=NULL, maxval=255)
 {
     if(!is(object, "pixmap"))
-        error("Can only write pixmap objects")
+        stop("Can only write pixmap objects")
 
     if(is.null(type))
         type <- if(is(object, "pixmapGrey")) "pgm" else "ppm"
