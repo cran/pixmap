@@ -1,3 +1,11 @@
+Changes in pixmap version 0.5-10
+
+  o Explicitly mention in the help file that read.pnm() only works for 
+    files, not other conntection.
+
+  o Fixed a bug in write.pnm() that tried to open the same connection twice.
+
+
 Changes in pixmap version 0.4-9
 
   o Fixed a minor glitch in write.pnm.

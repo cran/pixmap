@@ -11,7 +11,8 @@ write.pnm(object, file= NULL, forceplain = FALSE, type = NULL, maxval = 255)
 \description{Reading and writing of bitmap images in PBM (black/white), PGM
   (grey) and PPM (color) format.}
 \arguments{
-  \item{file}{name of the pnm file.}
+  \item{file}{name of the pnm file (general
+    \code{\link[base]{connections}} do not work at the moment).}
   \item{\dots}{further arguments passed to \code{\link{pixmap}} (like
     \code{bbox}).}
   \item{object}{an object of class \code{"pixmap"}.}

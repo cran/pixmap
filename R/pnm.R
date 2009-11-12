@@ -114,7 +114,6 @@ write.pnm <- function(object, file=NULL, forceplain=FALSE,
     comment <- "# R write.pnm output"
     if(forceplain) {
         con <- file(file, open="w")
-        open(con, open="w")
         code <- code - 3
         cat("P", code, "\n", file=con, sep="")
         cat(comment, "\n", file=con, sep="")
@@ -126,7 +125,6 @@ write.pnm <- function(object, file=NULL, forceplain=FALSE,
     }
     else {
         con <- file(file, open="wb")
-        open(con, open="wb")
         writeChar(paste("P", code, "\n", sep=""), con=con, eos=NULL)
         writeChar(paste(comment, "\n", sep=""), con=con, eos=NULL)
         writeChar(paste(do[2], " ", do[1], "\n", sep=""),
