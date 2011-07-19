@@ -1,4 +1,11 @@
-Changes in pixmap version 0.5-10
+Changes in pixmap version 0.4-11
+
+  o Added dummy NAMESPACE file
+
+  o Move class definitions to separate file, no Collate in DESCRIPTION
+
+
+Changes in pixmap version 0.4-10
 
   o Explicitly mention in the help file that read.pnm() only works for 
     files, not other conntection.
