@@ -51,8 +51,11 @@ read.pnmdata <- function(con, pnmhead, ...)
       xx <- 1 - array(xx, c(nl, ncb, nr))[,1:nc,]
     }
     else {
+      dataSize <- 1
+      if (pnmhead$maxval > 255)
+        dataSize <- 2
       xx <- readBin(con, "integer",
-                    n=ncells, size=1, signed=FALSE)
+                    n=ncells, size=dataSize, signed=FALSE)
     }
   }
   
