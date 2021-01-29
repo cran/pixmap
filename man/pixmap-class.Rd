@@ -12,6 +12,8 @@
 \alias{coerce,pixmapIndexed,pixmapRGB-method}
 \alias{coerce,ANY,pixmapGrey-method}
 \alias{coerce,ANY,pixmapIndexed-method}
+\alias{raster}
+\alias{as.raster.pixmapRGB}
 \title{Class Family "pixmap".}
 \description{The family \code{"pixmap"} (``pixel maps'') of classes provides
   methods for creating,
