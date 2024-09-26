@@ -33,7 +33,8 @@ pixmap <- function(data=NULL, nrow=dim(data)[1],
                    ncol=dim(data)[2],
                    bbox=NULL, bbcent=FALSE, cellres=NULL)
 {
-    cellres <- rep(cellres, length=2)
+    if (!is.null(cellres))
+        cellres <- rep(cellres, length=2)
     if(is.null(bbox)){
         if(is.null(cellres))
             cellres <- c(1,1)
