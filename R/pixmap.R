@@ -33,7 +33,7 @@ pixmap <- function(data=NULL, nrow=dim(data)[1],
                    ncol=dim(data)[2],
                    bbox=NULL, bbcent=FALSE, cellres=NULL)
 {
-    cellres <- rep(cellres, length=2)
+    if(!is.null(cellres)) cellres <- rep(cellres, length.out = 2)
     if(is.null(bbox)){
         if(is.null(cellres))
             cellres <- c(1,1)
@@ -132,7 +132,7 @@ pixmapIndexed = function(data, col=NULL, ...)
         else {
             if(length(col) < datamax){
                 warning("number of of colors smaller than number of data values, recycling\n")
-                col <- rep(col, length=datamax)
+                col <- rep(col, length.out = datamax)
             }
         }
     }

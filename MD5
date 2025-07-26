@@ -1,9 +1,9 @@
-9eeb53e06b25541d02ff4689fce0c509 *DESCRIPTION
+3805aa96ce4cf1abcce3e362b726e6d9 *DESCRIPTION
 08e9d985024225304139d286a5af35e9 *NAMESPACE
-695c67281de72980f52598ba8f4f81cf *NEWS.md
+c3ead51ea4c66e7c9cd156e61548f7fb *NEWS.md
 092a09aecda6cacda64aa1631f1f29e3 *R/AAA-classes.R
 0dc807db43774c2f43f475caba493b72 *R/addlogo.R
-95c2f25d900b4aced367c6907559f6a0 *R/pixmap.R
+38a09ad3eb237d3dba22199b36474dc4 *R/pixmap.R
 5a440b93c2d128b44021facf8866457b *R/pnm.R
 9b5d489330fef2268dbc3872e6527fb9 *R/pnmhead.R
 94cd098d86d1ed854d170e249ef39346 *inst/pictures/logo.pbm
@@ -14,5 +14,6 @@
 1caac753df8662361e906913535f170c *man/pixmap-class.Rd
 dd37e4a31da53ed7574fabbb8ab8d077 *man/pixmap.Rd
 dec9b907b4e75e9c72f8f87aec7ee117 *man/pnm.Rd
-1f7c43de2b003346b29dbc95754cdb35 *tests/bugs.R
+967f7212b3824a81ba3aac8576053ca3 *tests/bugs.R
+e957ead37def45015580f08cf4895597 *tests/bugs.Rout.save
 bee583190f221eb909fd2bd10065c34d *tests/logo-ex.R

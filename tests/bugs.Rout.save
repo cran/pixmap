@@ -1,0 +1,65 @@
+
+R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library("pixmap")
+> 
+> ## this triggered a bug in R <= 1.9.1
+> 
+> x <- pixmapIndexed(rep(1:8, 9), nrow=6, col=hsv(runif(8),runif(8),runif(8)))
+> plot(x)
+> print(x)
+Pixmap image
+  Type          : pixmapIndexed 
+  Size          : 6x12 
+  Resolution    : 1x1 
+  Bounding box  : 0 0 12 6 
+  Nr. of colors : 8 of 8 
+
+> file <- tempfile()
+> write.pnm(x, file=file)
+> unlink(file)
+> 
+> ###**********************************************************
+> 
+> # coercion of indexed -> RGB 
+> 
+> x1 <- as(x, "pixmapRGB")
+> x2 <- as(x1, "pixmapIndexed")
+> x3 <- as(x2, "pixmapRGB")
+> all.equal(x, x2)
+[1] TRUE
+> all.equal(x1, x3)
+[1] TRUE
+> 
+> ###**********************************************************
+> 
+> ## plotting images with only 1 column or row
+> ## (from bug report by Robert Esswein)
+> 
+> library("pixmap")
+> 
+> ## Vertical colorbar:
+> pm <- pixmapIndexed(matrix(1:16,ncol=1,nrow=16), col = rep(palette(), length.out = 16))
+> plot(pm)
+> 
+> ## Horizontal colorbar attempt:
+> pm <- pixmapIndexed(matrix(1:16,ncol=16,nrow=1), col = rep(palette(), length.out = 16))
+> plot(pm)
+> 
+> proc.time()
+   user  system elapsed 
+  0.318   0.035   0.343 

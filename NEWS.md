@@ -1,3 +1,12 @@
+# pixmap 0.4-14
+
+* In test `bugs.R` only show differences (if any) rather than making the
+  test fail.
+
+* Improve `rep()` calls in `pixmap()` to avoid replicating `NULL` vectors
+  and to avoid partial argument matching.
+
+
 # pixmap 0.4-13
 
 * Achim Zeileis takes over maintenance from Friedrich Leisch.

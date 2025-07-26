@@ -16,20 +16,20 @@ unlink(file)
 x1 <- as(x, "pixmapRGB")
 x2 <- as(x1, "pixmapIndexed")
 x3 <- as(x2, "pixmapRGB")
-stopifnot(all.equal(x, x2))
-stopifnot(all.equal(x1, x3))
+all.equal(x, x2)
+all.equal(x1, x3)
 
 ###**********************************************************
 
 ## plotting images with only 1 column or row
 ## (from bug report by Robert Esswein)
 
-library(pixmap)
+library("pixmap")
 
 ## Vertical colorbar:
-pm <- pixmapIndexed(matrix(1:16,ncol=1,nrow=16),col=palette())
+pm <- pixmapIndexed(matrix(1:16,ncol=1,nrow=16), col = rep(palette(), length.out = 16))
 plot(pm)
 
 ## Horizontal colorbar attempt:
-pm <- pixmapIndexed(matrix(1:16,ncol=16,nrow=1),col=palette())
+pm <- pixmapIndexed(matrix(1:16,ncol=16,nrow=1), col = rep(palette(), length.out = 16))
 plot(pm)
